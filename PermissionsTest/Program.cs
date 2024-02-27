@@ -18,6 +18,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization(o =>
 {
     o.AddPolicy("POLICY." + Permission.CreateThread.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.CreateThread)));
+    o.AddPolicy("POLICY." + Permission.ReadThread.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.ReadThread)));
+    o.AddPolicy("POLICY." + Permission.WriteThread.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.WriteThread)));
+    o.AddPolicy("POLICY." + Permission.ChangeThreadState.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.ChangeThreadState)));
 });
 
 var app = builder.Build();

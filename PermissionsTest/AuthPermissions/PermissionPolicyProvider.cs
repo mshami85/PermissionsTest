@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace PermissionsTest.AuthPermissions;
 
-class PermissionPolicyProvider : IAuthorizationPolicyProvider
+internal class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {
     public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
 
@@ -32,12 +32,17 @@ class PermissionPolicyProvider : IAuthorizationPolicyProvider
     // (like [MinimumAgeAuthorize] in this sample)
     public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
     {
-        if (Enum.TryParse<Permission>(policyName, out var perm))
+        var permission = policyName.StartsWith("POLICY.") ? policyName[(policyName.IndexOf(".") + 1)..] : null;
+        if (permission != null)
         {
-            var policy = new AuthorizationPolicyBuilder();
-            policy.AddRequirements(new PermissionRequirement(perm));
-            return Task.FromResult(policy.Build());
+            if (Enum.TryParse<Permission>(permission, out var perm))
+            {
+                var policy = new AuthorizationPolicyBuilder();
+                policy.AddRequirements(new PermissionRequirement(perm));
+                return Task.FromResult(policy.Build());
+            }
         }
+        
 
         // If the policy name doesn't match the format expected by this policy provider,
         // try the fallback provider. If no fallback provider is used, this would return 

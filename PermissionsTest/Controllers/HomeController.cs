@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PermissionsTest.AuthPermissions;
+using PermissionsTest.Classes;
 using PermissionsTest.Models;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -21,10 +22,11 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         ViewBag.State = User.Identity?.IsAuthenticated ?? false ? "Hooooorrrrrrraaaaayyyyyyyyy Logged in" : "Logged out";
+        var permissons = User.Claims.FirstOrDefault(c => c.Type == "PermissionFor1")?.Value.EnumToString();
         return View();
     }
 
-    [Permission(Permission.CreateThread)]
+    [Permission(Permission.WriteThread)]
     public IActionResult Privacy()
     {
         var user = User;
@@ -47,7 +49,7 @@ public class HomeController : Controller
             new(ClaimTypes.Name, "SHAMI"),
             new(ClaimTypes.Role, "Admin"),
             new("PermissionFor1", "100011"),
-            new("PermissionFor2", "000000"),
+            new("PermissionFor2", "001000"),
             new("PermissionFor3", "000000"),
             new("Community","2")
         };
