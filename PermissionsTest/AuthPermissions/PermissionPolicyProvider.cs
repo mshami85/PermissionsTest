@@ -32,7 +32,7 @@ internal class PermissionPolicyProvider : IAuthorizationPolicyProvider
     // (like [MinimumAgeAuthorize] in this sample)
     public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
     {
-        var permission = policyName.StartsWith("POLICY.") ? policyName[(policyName.IndexOf(".") + 1)..] : null;
+        var permission = policyName.StartsWith(Constants.PolicyPrefix) ? policyName[Constants.PolicyPrefix.Length..] : null;
         if (permission != null)
         {
             if (Enum.TryParse<Permission>(permission, out var perm))
@@ -42,7 +42,7 @@ internal class PermissionPolicyProvider : IAuthorizationPolicyProvider
                 return Task.FromResult(policy.Build());
             }
         }
-        
+
 
         // If the policy name doesn't match the format expected by this policy provider,
         // try the fallback provider. If no fallback provider is used, this would return 

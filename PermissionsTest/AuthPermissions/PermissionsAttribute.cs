@@ -6,8 +6,8 @@ internal class PermissionAttribute : AuthorizeAttribute
 {
     public Permission Permission
     {
-        get => Enum.Parse<Permission>(Policy[Policy.IndexOf(".")..]);
-        set => Policy = $"POLICY.{value}";
+        get => Enum.Parse<Permission>(Policy[Constants.PolicyPrefix.Length..]);
+        set => Policy = $"{Constants.PolicyPrefix}{value}";
     }
 
     public PermissionAttribute(Permission permission)

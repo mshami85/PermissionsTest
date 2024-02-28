@@ -22,7 +22,7 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         ViewBag.State = User.Identity?.IsAuthenticated ?? false ? "Hooooorrrrrrraaaaayyyyyyyyy Logged in" : "Logged out";
-        var permissons = User.Claims.FirstOrDefault(c => c.Type == "PermissionFor1")?.Value.EnumToString();
+        var permissons = User.Claims.FirstOrDefault(c => c.Type == Constants.PermissionClaimPrefix + "1")?.Value.ResolvePermissions();
         return View();
     }
 
@@ -41,24 +41,20 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Signin()
     {
-
         // In a real-world application, user credentials would need validated before signing in
         var claims = new List<Claim>
         {
             // Add a Name claim and, if birth date was provided, a DateOfBirth claim
             new(ClaimTypes.Name, "SHAMI"),
             new(ClaimTypes.Role, "Admin"),
-            new("PermissionFor1", "100011"),
-            new("PermissionFor2", "001000"),
-            new("PermissionFor3", "000000"),
-            new("Community","2")
+            new(Constants.CurrentCommunityClaim,"1"),
+            new(Constants.PermissionClaimPrefix+"1",PermissionExt.CreatePermissionsVector().GrantPermission(Permission.WriteThread).GrantPermission(Permission.ReadThread)),
+            new(Constants.PermissionClaimPrefix+"2",PermissionExt.CreatePermissionsVector().GrantPermission(Permission.ReadThread)),
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-        var test = User.Identity;
 
         return RedirectToAction("Index");
     }
