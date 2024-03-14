@@ -1,7 +1,7 @@
+using APIs.Permissions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using PermissionsTest.AuthPermissions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +17,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 });
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("POLICY." + Permission.CreateThread.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.CreateThread)));
-    o.AddPolicy("POLICY." + Permission.ReadThread.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.ReadThread)));
-    o.AddPolicy("POLICY." + Permission.WriteThread.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.WriteThread)));
-    o.AddPolicy("POLICY." + Permission.ChangeThreadState.ToString(), c => c.AddRequirements(new PermissionRequirement(Permission.ChangeThreadState)));
+    foreach (var item in Enum.GetValues<Permission>())
+    {
+        o.AddPolicy(PermissionConstants.PolicyPrefix + item.ToString(), config =>
+        {
+            config.AddRequirements(new PermissionRequirement(item));
+        });
+    }
 });
 
 var app = builder.Build();

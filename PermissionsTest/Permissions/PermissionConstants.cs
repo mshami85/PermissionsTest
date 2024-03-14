@@ -1,6 +1,6 @@
-﻿namespace PermissionsTest.AuthPermissions
+﻿namespace APIs.Permissions
 {
-    public class Constants
+    internal class PermissionConstants
     {
         public const string PolicyPrefix = "POLICY.";
         public const string CurrentCommunityClaim = "Comm";
